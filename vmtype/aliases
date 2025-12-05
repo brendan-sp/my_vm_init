@@ -1,0 +1,13 @@
+# alias=actual-machine-type
+1-a100=a2-highgpu-1g
+2-a100=a2-highgpu-2g
+4-a100=a2-highgpu-4g
+
+# C3 CPU-only presets
+88-c3=c3-standard-88
+22-c3=c3-standard-22
+8-c3=c3-standard-8
+
+# vm names-to-zones
+brens-dev-w1b=us-west1-b
+brens-dev-c1f=us-central1-f
