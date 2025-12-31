@@ -33,6 +33,9 @@ echo 'export PATH=/usr/local/cuda/bin:$PATH' >> ~/.bashrc
 echo 'export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
 source ~/.bashrc
 
+# if using sql
+sudo apt-get install postgresql postgresql-contrib
+
 # espnet conda env installation
 # copy tools from latest version of repo containing the script `setup_miniforge.sh` and replace old tools dir with it
 # Edited Makefile line 120

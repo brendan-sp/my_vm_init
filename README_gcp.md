@@ -24,10 +24,28 @@ In VM B, copy the target data into `home/brendanoconnor`
 ```bash
 scp -i ~/.ssh/gcp_vm_to_vm -r <targetuser>@<internal_ip>:/home/brendanoconnor/path/to/data path/to/destination
 ```
+For example: `scp -i ~/.ssh/gcp_vm_to_vm -r brendanoconnor@10.128.15.194:exp/spk_train_rawnet3_raw_sp spk1/`
 ### 6. Presuming this works, add the following to ~/.ssh/config:
 ```bash
 Host <ssh-connection-name>
     HostName <VM-B-internal_ip>
     User brendanoconnor
     IdentityFile ~/.ssh/gcp_vm_to_vm
+```
+
+
+## Search for a zone that provides the machine-type you want:
+``` bash
+for Z in us-central1-b us-central1-c us-central1-f us-west4-b us-east1-b; do
+  gcloud compute instances create brens-a2-2g-${Z//-/} \
+    --zone="$Z" \                   
+    --machine-type=a2-highgpu-2g \
+    --maintenance-policy=TERMINATE \
+    --image-family=brens-golden \
+    --image-project=sc-music-research \
+    --boot-disk-size=500GB \
+    --boot-disk-type=pd-balanced \
+    --quiet &
+done
+wait
 ```
