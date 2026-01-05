@@ -1,0 +1,113 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+CONFIG_FILE="${HOME}/.config/vmtype/aliases"
+
+if [[ $# -lt 2 ]]; then
+  echo "Usage: vmtype <vm-name> <type-alias>"
+  echo "Example: vmtype brens-dev-w1b 1-a100"
+  echo "Zone is inferred from vm-name mapping in $CONFIG_FILE"
+  exit 1
+fi
+
+VM_NAME="$1"
+TYPE_ALIAS="$2"
+
+if [[ ! -f "$CONFIG_FILE" ]]; then
+  echo "Config file not found: $CONFIG_FILE"
+  echo "Create it and add lines like: alias=machine-type"
+  echo "Example: a100=a2-highgpu-1g"
+  exit 1
+fi
+
+# Function to look up a value from the config file
+lookup_alias() {
+  local key="$1"
+  grep "^${key}=" "$CONFIG_FILE" 2>/dev/null | head -1 | cut -d'=' -f2
+}
+
+# Look up machine type
+MACHINE_TYPE=$(lookup_alias "$TYPE_ALIAS")
+
+# Look up zone from VM name
+ZONE=$(lookup_alias "$VM_NAME")
+
+if [[ -z "$ZONE" ]]; then
+  echo "Error: No zone mapping found for VM '$VM_NAME'"
+  echo "Add a mapping to $CONFIG_FILE like: $VM_NAME=us-west1-b"
+  exit 1
+fi
+
+if [[ -z "$MACHINE_TYPE" ]]; then
+  echo "Unknown machine type alias: '$TYPE_ALIAS'"
+  echo "Known machine type aliases:"
+  grep -v '^#' "$CONFIG_FILE" | grep -v '^$' | grep -v '^[a-z].*-.*=' | sort
+  exit 1
+fi
+
+echo "Changing $VM_NAME in $ZONE to machine type: $MACHINE_TYPE"
+
+run() {
+  echo "+ $*"
+  "$@"
+}
+
+# Get current VM status and machine type
+VM_INFO=$(gcloud compute instances describe "$VM_NAME" --zone="$ZONE" --format="value(status,machineType)")
+CURRENT_STATUS=$(echo "$VM_INFO" | cut -d$'\t' -f1)
+CURRENT_TYPE=$(echo "$VM_INFO" | cut -d$'\t' -f2 | xargs basename)
+
+echo "Current status: $CURRENT_STATUS"
+echo "Current machine type: $CURRENT_TYPE"
+
+# Check if already the target machine type
+if [[ "$CURRENT_TYPE" == "$MACHINE_TYPE" ]]; then
+  echo "VM already has machine type $MACHINE_TYPE. Nothing to do."
+  exit 0
+fi
+
+# Stop the VM if it's not already stopped
+if [[ "$CURRENT_STATUS" != "TERMINATED" ]]; then
+  run gcloud compute instances stop "$VM_NAME" --zone="$ZONE"
+else
+  echo "VM is already stopped."
+fi
+
+# Change machine type
+if run gcloud compute instances set-machine-type "$VM_NAME" \
+  --zone="$ZONE" \
+  --machine-type="$MACHINE_TYPE"; then
+  # Start the VM only if set-machine-type was successful
+  run gcloud compute instances start "$VM_NAME" --zone="$ZONE"
+  
+  # Fetch the new external IP
+  echo "Fetching external IP..."
+  EXTERNAL_IP=$(gcloud compute instances describe "$VM_NAME" \
+    --zone="$ZONE" \
+    --format="value(networkInterfaces[0].accessConfigs[0].natIP)")
+  
+  if [[ -n "$EXTERNAL_IP" ]]; then
+    echo "External IP: $EXTERNAL_IP"
+    
+    # Update SSH config
+    SSH_CONFIG="${HOME}/.ssh/config"
+    if [[ -f "$SSH_CONFIG" ]]; then
+      # Use sed to update the HostName for the matching Host block
+      if grep -q "^Host ${VM_NAME}$" "$SSH_CONFIG"; then
+        sed -i '' "/^Host ${VM_NAME}$/,/^Host /{s/^[[:space:]]*HostName .*/    HostName ${EXTERNAL_IP}/;}" "$SSH_CONFIG"
+        echo "Updated SSH config for $VM_NAME with IP $EXTERNAL_IP"
+      else
+        echo "Warning: No SSH config entry found for Host $VM_NAME"
+      fi
+    else
+      echo "Warning: SSH config not found at $SSH_CONFIG"
+    fi
+  else
+    echo "Warning: Could not fetch external IP"
+  fi
+  
+  echo "Done."
+else
+  echo "Failed to set machine type."
+  exit 1
+fi
