@@ -6,7 +6,7 @@
 
 LOG_DIR="/home/brendanoconnor/logs"
 LOG_FILE="${LOG_DIR}/startup_$(date +%Y%m%d_%H%M%S).log"
-EXPERIMENT_DIR="/home/brendanoconnor/gs_imports/roformer_voice_separated_32kHz/exp/spk_12m_roformered_32khz_6sWindow_b256_sp"
+EXPERIMENT_DIR="/mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_6sWindow_sp"
 USER="brendanoconnor"
 
 mkdir -p "$LOG_DIR"
@@ -36,14 +36,14 @@ if [ -f "${EXPERIMENT_DIR}/checkpoint.pth" ]; then
     echo "$(date): Starting training in screen session..."
     
     # Start training as the user in a detached screen session
-    su - "$USER" -c "screen -dmS training /home/brendanoconnor/scripts/train_with_preemption.sh '${EXPERIMENT_DIR}'"
+    su - "$USER" -c "screen -dmS training /home/brendanoconnor/my_vm_init/scripts/train_with_preemption.sh '${EXPERIMENT_DIR}'"
     
     echo "$(date): Training started in screen session 'training'"
     echo "$(date): Attach with: screen -r training"
 else
     echo "$(date): No checkpoint found at ${EXPERIMENT_DIR}"
     echo "$(date): To start initial training, run manually:"
-    echo "  /home/brendanoconnor/scripts/train_with_preemption.sh ${EXPERIMENT_DIR}"
+    echo "  /home/brendanoconnor/my_vm_init/scripts/train_with_preemption.sh ${EXPERIMENT_DIR}"
 fi
 
 echo "$(date): Startup script complete"
