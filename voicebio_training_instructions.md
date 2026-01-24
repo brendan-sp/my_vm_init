@@ -5,7 +5,6 @@
 Transfer, mount and persist data disk to brens-h100-spot (see `transfer_data_disk_between_vms.md`).
 
 
-
 Activate and SSH into brens-h100-spot.
 
 ## 2. Clone repositories and setup environment
@@ -35,7 +34,7 @@ cd /mnt/data/gs_imports
 time find . -type f \( -name "*.scp" -o -name "*.csv" \) -exec sed -i 's|/home/brendanoconnor/gs_imports|/mnt/data/gs_imports|g' {} +
 ```
 
-Copy the pretrained checkpoint to the experiment directory:
+Copy the pretrained checkpoint to the experiment directory (Do this whenever you want to restart training from scratch):
 
 ```bash
 cp /mnt/data/model_ckpts/pretrained_12m_model_for_resumed_training_on_12m_roformered_desilenced_32khz/checkpoint.pth \
@@ -56,7 +55,13 @@ screen -dmS training ./train_with_preemption.sh "${EXPERIMENT_DIR}"
 ./train_with_preemption.sh "${EXPERIMENT_DIR}"
 ```
 
-## 6. After VM setup
+## 6. After VM setup and running a training script, exit and do the following to have vm run the relevant script after reboot
+
+``` bash
+gcloud compute instances add-metadata brens-h100-spot \
+--zone=us-central1-a \
+--metadata-from-file startup-script=/home/brendanoconnor/my_vm_init/spot_vm_scripts/startup_training.sh
+```
 
 ## TODO: GCS bucket cleanup
 
