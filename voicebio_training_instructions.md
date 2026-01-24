@@ -44,7 +44,7 @@ cp /mnt/data/model_ckpts/pretrained_12m_model_for_resumed_training_on_12m_roform
 ## 5. Train
 
 ```bash
-cd /home/brendanoconnor/my_vm_init/scripts
+cd /home/brendanoconnor/my_vm_init/spot_vm_scripts
 EXPERIMENT_DIR="/mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_6sWindow_sp"
 
 # Option A: Run in detached screen (runs in background)
@@ -57,11 +57,13 @@ screen -dmS training ./train_with_preemption.sh "${EXPERIMENT_DIR}"
 
 ## 6. After VM setup and running a training script, exit and do the following to have vm run the relevant script after reboot
 
-``` bash
-gcloud compute instances add-metadata brens-a100-spot-test \
---zone=us-central1-a \
---metadata-from-file startup-script=/path/to/startup_script/on/current/device
+```bash
+gcloud compute instances add-metadata <VM_NAME> \
+--zone=<ZONE> \
+--metadata-from-file startup-script=/local/path/to/startup_training.sh
 ```
+
+Replace `<VM_NAME>` and `<ZONE>` with your actual values (e.g., `brens-a100-spot-test` and `us-central1-a`).
 
 ## TODO: GCS bucket cleanup
 

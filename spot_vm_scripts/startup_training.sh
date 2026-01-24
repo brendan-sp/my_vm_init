@@ -36,14 +36,14 @@ if [ -f "${EXPERIMENT_DIR}/checkpoint.pth" ]; then
     echo "$(date): Starting training in screen session..."
     
     # Start training as the user in a detached screen session
-    su - "$USER" -c "screen -dmS training /home/brendanoconnor/my_vm_init/scripts/train_with_preemption.sh '${EXPERIMENT_DIR}'"
+    su - "$USER" -c "screen -dmS training /home/brendanoconnor/my_vm_init/spot_vm_scripts/train_with_preemption.sh '${EXPERIMENT_DIR}'"
     
     echo "$(date): Training started in screen session 'training'"
     echo "$(date): Attach with: screen -r training"
 else
     echo "$(date): No checkpoint found at ${EXPERIMENT_DIR}"
     echo "$(date): To start initial training, run manually:"
-    echo "  /home/brendanoconnor/my_vm_init/scripts/train_with_preemption.sh ${EXPERIMENT_DIR}"
+    echo "  /home/brendanoconnor/my_vm_init/spot_vm_scripts/train_with_preemption.sh ${EXPERIMENT_DIR}"
 fi
 
 echo "$(date): Startup script complete"
