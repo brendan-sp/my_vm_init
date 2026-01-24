@@ -54,6 +54,10 @@ log "Preemption monitor started (PID: $MONITOR_PID)"
 source /home/brendanoconnor/miniforge3/etc/profile.d/conda.sh
 conda activate espnet
 
+# Detect number of available GPUs
+NGPU=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
+log "Detected $NGPU GPU(s)"
+
 # Run training with fixed experiment directory and resume enabled
 cd "$TRAINING_DIR"
 log "Starting training..."
@@ -65,6 +69,7 @@ log "Starting training..."
     --spk_exp "$EXPERIMENT_DIR" \
     --spk_config conf/train_rawnet3_12m_8H100s.yaml \
     --use_datetime_suffix false \
+    --ngpu "$NGPU" \
     --resume true
 
 EXIT_CODE=$?
