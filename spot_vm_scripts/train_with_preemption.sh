@@ -67,7 +67,7 @@ log "Starting training..."
     --stop_stage 5 \
     --data_dir_prefix /mnt/data/gs_imports/12m_roformered_desilenced_32khz \
     --spk_exp "$EXPERIMENT_DIR" \
-    --spk_config conf/train_rawnet3_12m_8H100s.yaml \
+    --spk_config conf/train_rawnet3_12m_1a100.yaml \
     --use_datetime_suffix false \
     --ngpu "$NGPU" \
     --resume true
