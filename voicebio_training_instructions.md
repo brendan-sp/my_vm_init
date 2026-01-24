@@ -58,9 +58,9 @@ screen -dmS training ./train_with_preemption.sh "${EXPERIMENT_DIR}"
 ## 6. After VM setup and running a training script, exit and do the following to have vm run the relevant script after reboot
 
 ``` bash
-gcloud compute instances add-metadata brens-h100-spot \
+gcloud compute instances add-metadata brens-a100-spot-test \
 --zone=us-central1-a \
---metadata-from-file startup-script=/home/brendanoconnor/my_vm_init/spot_vm_scripts/startup_training.sh
+--metadata-from-file startup-script=/path/to/startup_script/on/current/device
 ```
 
 ## TODO: GCS bucket cleanup
