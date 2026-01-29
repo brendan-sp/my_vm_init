@@ -1,16 +1,19 @@
 #!/bin/bash
 # save as: retry_create_h100.sh
+# Usage: ./retry_create_h100.sh [machine-type]
+# Example: ./retry_create_h100.sh a3-highgpu-4g
 
-INSTANCE_NAME="brens-8h100s"
+INSTANCE_NAME="brens-xlarge-training"
 ZONE="us-central1-a"
+MACHINE_TYPE="${1:-a3-highgpu-8g}"  # First argument, defaults to a3-highgpu-8g
 RETRY_INTERVAL=300  # 5 minutes between retries
 
 while true; do
-  echo "[$(date)] Attempting to create $INSTANCE_NAME..."
+  echo "[$(date)] Attempting to create $INSTANCE_NAME with $MACHINE_TYPE..."
   
   gcloud compute instances create "$INSTANCE_NAME" \
     --zone="$ZONE" \
-    --machine-type=a3-highgpu-8g \
+    --machine-type="$MACHINE_TYPE" \
     --boot-disk-size=500GB \
     --boot-disk-type=pd-ssd \
     --source-snapshot=brens-system-snapshot \
