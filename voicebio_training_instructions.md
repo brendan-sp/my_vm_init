@@ -38,7 +38,7 @@ Copy the pretrained checkpoint to the experiment directory (Do this whenever you
 
 ```bash
 cp /mnt/data/model_ckpts/pretrained_12m_model_for_resumed_training_on_12m_roformered_desilenced_32khz/checkpoint.pth \
-   /mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_6sWindow_sp/
+   /mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_sp/
 ```
 
 ## 5. Train
@@ -47,11 +47,11 @@ cp /mnt/data/model_ckpts/pretrained_12m_model_for_resumed_training_on_12m_roform
 
 ```bash
 
-rm -rf /mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_6sWindow_sp/wandb/
-rm -f /mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_6sWindow_sp/wandb_run_id
+rm -rf /mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_sp/wandb/
+rm -f /mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_sp/wandb_run_id
 
 cd /home/brendanoconnor/my_vm_init/spot_vm_scripts
-EXPERIMENT_DIR="/mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_6sWindow_sp"
+EXPERIMENT_DIR="/mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_sp"
 
 # Option A: Run in detached screen (runs in background)
 screen -dmS training ./train_with_preemption.sh "${EXPERIMENT_DIR}"

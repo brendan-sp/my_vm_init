@@ -3,7 +3,7 @@
 # Starts preemption monitor and runs training with resume support
 #
 # Usage: ./train_with_preemption.sh <experiment_directory>
-# Example: ./train_with_preemption.sh /mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_6sWindow_sp
+# Example: ./train_with_preemption.sh /mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_sp
 
 set -e
 
@@ -14,7 +14,7 @@ LOG_FILE="/home/brendanoconnor/logs/training_wrapper.log"
 # Require experiment directory as argument
 if [ -z "$1" ]; then
     echo "Usage: $0 <experiment_directory>"
-    echo "Example: $0 /mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_6sWindow_sp"
+    echo "Example: $0 /mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_sp"
     exit 1
 fi
 

@@ -40,7 +40,7 @@ fi
 
 LOG_DIR="/home/brendanoconnor/logs"
 LOG_FILE="${LOG_DIR}/startup_$(date +%Y%m%d_%H%M%S).log"
-EXPERIMENT_DIR="/mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_6sWindow_sp"
+EXPERIMENT_DIR="/mnt/data/gs_imports/12m_roformered_desilenced_32khz/exp/spk_12m_roformered_32khz_sp"
 USER="brendanoconnor"
 HOME_DIR="/home/brendanoconnor"
 
